@@ -1,78 +1,158 @@
 <template>
   <div id="app">
-    <input type="file" class="mini" onchange="changepic(this)" accept="image/jpg,image/jpeg,image/png,image/PNG">上传图片</input>
-    <div>
-      图片尺寸 <br>
-      宽:
-      <input type="number" placeholder="请输入需要合成的图片宽度">
-      高：
-      <input type="number" placeholder="请输入需要合成的图片高度">
+    <h2>上传或粘贴图片</h2>
+    <field name="uploader" label="">
+      <template #input>
+        <uploader v-model="uploader" ref="imgs" />
+      </template>
+    </field>
+    <h2>设置gif尺寸</h2>
+    宽度：<input type="number" class="input" v-model="width">&nbsp;&nbsp;
+    高度：<input type="number" class="input" v-model="height"><br>
+    帧延时(ms)：<input type="number" class="input" v-model="delay"><br>
+    质量(1~10以内数字)：<input type="number" class="input" v-model="quality">
 
-    </div>
-    <button class="btn" @click="onCreateGif">上传图片合成GIF</button>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <br><br>
+    <van-button type="primary" @click="toPreview">预览</van-button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <van-button type="primary" @click="toDownload">下载</van-button>
+    <br><br>
+    <img v-show="gifImg" :src="gifImg" alt="">
+    <br>
+    <h2>视频转Gif</h2>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 import GIF from 'gif.js'
-
+import Vue from 'vue'
+import { Field, Uploader, Button, Toast} from 'vant'
+Vue.use(Toast)
 export default {
   name: 'App',
+  data () {
+    return {
+      uploader: [],
+      gifImg: '',
+      width: 0,
+      height: 0,
+      delay: 200,
+      quality: 10
+    }
+  },
   components: {
-    HelloWorld
+    Field,
+    Uploader,
+    VanButton: Button
   },
   methods: {
-    onCreateGif () {
-      this.createGif([
-        './static/imgs/1.png',
-        './static/imgs/2.png',
-        './static/imgs/3.png',
-        './static/imgs/4.png',
-        './static/imgs/5.png',
-        './static/imgs/6.png',
-        './static/imgs/7.png'
-      ], 100)
+    toPreview () {
+      this.createGif(this.uploader.map(item => item.content))
     },
-    async createGif(imgs, delay) {
+    toDownload () {
+      this.createGif(this.uploader.map(item => item.content), true)
+    },
+    async createGif(imgs, needDownload = false) {
+      if (!this.uploader.length) {
+        return Toast('请上传图片');
+      }
+      if(this.uploader.length < 2) {
+        return Toast('至少需要上传两张图片');
+      }
       const gif = new GIF({
         workers: 2,
-        quality: 10,
+        quality: this.quality,
         workerScript: './static/gifjs/gif.worker.js'
       });
-      gif.on('finished', function(blob) {
-        //生成图片链接
-        const url = URL.createObjectURL(blob);
+      gif.on('finished', blob => {
+        this.gifImg = URL.createObjectURL(blob);
+        if (!needDownload) return
         const element = document.createElement('a');
         element.setAttribute('download', 'img')
-        element.setAttribute('href', url)
+        element.setAttribute('href', this.gifImg)
         element.click()
       })
 
       const canvas= document.createElement("canvas");
       const ctx = canvas.getContext('2d');
       for (let i = 0; i < imgs.length; i++) {
-        await this.loadImg(gif, canvas, ctx, imgs[i])
+        await this.loadImg({
+          gif,
+          canvas,
+          ctx,
+          img: imgs[i]
+        })
       }
       gif.render()
     },
-    loadImg (gif, canvas, ctx, img) {
+    loadImg ({gif, canvas, ctx, img, } = config) {
       return new Promise(resolve => {
         const imgImage = new Image();
         imgImage.src = img;
+        canvas.width = this.width
+        canvas.height = this.height
+        ctx.fillRect(0, 0, canvas.width, canvas.height);//铺底色
         imgImage.onload = function (e) {
-          //Canvas绘制图片
-          canvas.width = 508;
-          canvas.height = 890;
-          //铺底色
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(imgImage, 0, 0, canvas.width, canvas.height);
-          gif.addFrame(canvas,{copy:true,delay:500});
+          ctx.drawImage(imgImage, 0, 0, this.width, this.height);
+          gif.addFrame(canvas, {copy:true, delay: this.delay});
           resolve()
         }
       })
+    },
+    setDefaultSize () {
+      const img = document.createElement('img')
+      img.setAttribute('src', this.uploader[0].content)
+      img.setAttribute('style', "opacity: 0.01;")
+      document.body.append(img)
+      setTimeout(() => {
+        const size = img.getBoundingClientRect()
+        console.log(size)
+        this.width = size.width
+        this.height = size.height
+        document.body.removeChild(img)
+      }, 50)
     }
+  },
+  watch: {
+    uploader(n, o) {
+      if (n.length === 1 && !o.length) {
+        this.setDefaultSize()
+      }
+    }
+  },
+  mounted() {
+    window._this = this
+    document.addEventListener('paste', (event) => {
+      if (event.clipboardData || event.originalEvent) {
+        var clipboardData = (event.clipboardData || event.originalEvent.clipboardData);
+        if (!clipboardData.types.includes('Files')) return
+        if (clipboardData.items) {
+          var  blob;
+          for (var i = 0; i < clipboardData.items.length; i++) {
+            if (clipboardData.items[i].type.indexOf("image") !== -1) {
+              blob = clipboardData.items[i].getAsFile();
+            }
+          }
+          var render = new FileReader();
+          render.onload = (evt) => {
+            //输出base64编码
+            var base64 = evt.target.result;
+
+            window._this.uploader.push({
+              file: clipboardData.files[0],
+              content: base64,
+              message: '',
+              status: ''
+            })
+            if (window._this.uploader.length === 1) { // hack  没有触发 watch
+              this.setDefaultSize()
+            }
+          }
+          render.readAsDataURL(blob);
+        }
+      }
+    })
+
   }
 }
 </script>
@@ -82,8 +162,11 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  text-align: left;
   color: #2c3e50;
-  margin-top: 60px;
+  padding: 20px;
+}
+.input {
+  width: 60px;
 }
 </style>

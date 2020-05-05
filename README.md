@@ -1,19 +1,6 @@
 # gif_demo
 
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+-[X] 上传图片合成GIF
+-[X] 粘贴图片合成GIF
+-[ ] 视频转gif
+-[ ] 分解gif
