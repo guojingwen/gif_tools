@@ -19,16 +19,17 @@
     <br><br>
     <img v-show="gifImg" :src="gifImg" alt="">
     <br>
+    <hr>
     <h2>视频转Gif</h2>
     <label for="fileinp">
       <van-button type="primary" size="small">选择视频</van-button><span>&nbsp;请选择或粘贴视频文件</span>
       <input type="file" id="fileinp" accept="video/*" @change="uploaderVideo">
     </label>
-    <br><br>
+    <br> <br>
     <video ref="video" class="video" v-show="video.videoUrl" controls="true" :src="video.videoUrl" @play="play" @pause="pause"></video>
     <br>
     <img v-show="video.gifImg" :src="video.gifImg" alt="">
-    <hr>
+    <br>
     宽度：<input type="number" class="input" v-model="video.width">&nbsp;&nbsp;
     高度：<input type="number" class="input" v-model="video.height"><br>
     帧延时(ms)：<input type="number" class="input" v-model="video.delay"><br>
@@ -118,10 +119,10 @@ export default {
     },
     toDownloadVideo () {
       if (!this.video.videoUrl) {
-        Toast('请先选择视频')
+        return Toast('请先选择视频')
       }
       if (!this.video.gifImg) {
-        Toast('请播放选择视频')
+        return Toast('请播放视频生成预览图')
       }
       const element = document.createElement('a');
       element.setAttribute('download', 'img')
