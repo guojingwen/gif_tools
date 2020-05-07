@@ -1,5 +1,23 @@
 <template>
   <div id="app">
+    <h2>自制解压神器&文档助手</h2>
+    <h2>视频转Gif</h2>
+    <label for="fileinp">
+      <van-button type="primary" size="small">选择视频</van-button><span>&nbsp;请选择或粘贴视频文件</span>
+      <input type="file" id="fileinp" accept="video/*" @change="uploaderVideo">
+    </label>
+    <br> <br>
+    <video ref="video" class="video" v-show="video.videoUrl" controls="true" :src="video.videoUrl" @play="play" @pause="pause"></video>
+
+    <br>
+    宽度：<input type="number" class="input" v-model="video.width">&nbsp;&nbsp;
+    高度：<input type="number" class="input" v-model="video.height"><br>
+    帧延时(ms)：<input type="number" class="input" v-model="video.delay"><br>
+    质量(1~30以内数字,越低越清楚)：<input type="number" class="input" v-model="video.quality">
+    <br>
+    <img v-show="video.gifImg" :src="video.gifImg" alt="">
+    <br>
+    <hr>
     <h2>上传或粘贴图片</h2>
     <field name="uploader" label="">
       <template #input>
@@ -18,22 +36,6 @@
     <van-button type="primary" size="small"  @click="toDownload">下载</van-button>
     <br><br>
     <img v-show="gifImg" :src="gifImg" alt="">
-    <br>
-    <hr>
-    <h2>视频转Gif</h2>
-    <label for="fileinp">
-      <van-button type="primary" size="small">选择视频</van-button><span>&nbsp;请选择或粘贴视频文件</span>
-      <input type="file" id="fileinp" accept="video/*" @change="uploaderVideo">
-    </label>
-    <br> <br>
-    <video ref="video" class="video" v-show="video.videoUrl" controls="true" :src="video.videoUrl" @play="play" @pause="pause"></video>
-    <br>
-    <img v-show="video.gifImg" :src="video.gifImg" alt="">
-    <br>
-    宽度：<input type="number" class="input" v-model="video.width">&nbsp;&nbsp;
-    高度：<input type="number" class="input" v-model="video.height"><br>
-    帧延时(ms)：<input type="number" class="input" v-model="video.delay"><br>
-    质量(1~30以内数字,越低越清楚)：<input type="number" class="input" v-model="video.quality">
     <br><br>
     <van-button type="primary" size="small"  @click="toDownloadVideo">下载</van-button>
   </div>

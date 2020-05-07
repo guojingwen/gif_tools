@@ -15,7 +15,6 @@
     "@vue/cli-plugin-babel": "^4.3.0",
     "@vue/cli-service": "^4.3.0",
     "babel-plugin-import": "^1.13.0",
-    "copy-webpack-plugin": "^5.1.1",
     "gif.js": "^0.2.0",
     "vue-template-compiler": "^2.6.11"
   },
