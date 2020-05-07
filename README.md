@@ -4,3 +4,6 @@
 -[X] 粘贴图片合成GIF
 -[X] 视频转gif
 -[ ] 分解gif
+
+
+- document.execCommand('copy') gif图片不起作用
