@@ -3,22 +3,27 @@
     <h2>自制解压神器&文档助手</h2>
     <video-to-gif></video-to-gif>
     <hr>
-    <img-to-gif></img-to-gif>
+    <imgs-to-gif></imgs-to-gif>
+    <hr>
+    <gif-to-imgs></gif-to-imgs>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
-import ImgToGif from './imgToGif.vue'
+import ImgsToGif from './imgsToGif.vue'
 import VideoToGif from './videoToGif.vue'
+import GifToImgs from './gifToImgs.vue'
 import { Button, Toast} from 'vant'
+import 'gif.js'
 Vue.use(Toast)
 Vue.use(Button)
 export default {
   name: 'App',
   components: {
-    ImgToGif,
-    VideoToGif
+    ImgsToGif,
+    VideoToGif,
+    GifToImgs
   }
 }
 </script>
