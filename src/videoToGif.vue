@@ -2,7 +2,7 @@
 	<div>
 		<h2>视频转Gif</h2>
 		<label for="fileinp">
-			<van-button type="primary" size="small">选择视频</van-button><span>&nbsp;请选择或粘贴视频文件</span>
+			<van-button type="primary" size="small">选择视频</van-button><span>&nbsp;请选择视频文件</span>
 			<input type="file" id="fileinp" accept="video/*" @change="uploaderVideo">
 		</label>
 		<br> <br>
