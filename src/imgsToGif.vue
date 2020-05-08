@@ -19,7 +19,7 @@
 		<van-button type="primary" size="small"  @click="toDownload">下载</van-button>
 		<br><br>
 
-		<img v-show="gifImg" :src="gifImg" alt="">
+		<img class="preview-img" v-show="gifImg" :src="gifImg" alt="">
 		<br><br>
 	</div>
 </template>
@@ -153,3 +153,10 @@ export default {
 	}
 }
 </script>
+
+<style>
+.preview-img {
+	max-width: 300px;
+	max-height: 400px;
+}
+</style>
