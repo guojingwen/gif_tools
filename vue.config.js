@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   filenameHashing: false,
   publicPath: process.env.NODE_ENV === 'production'
-    ? '/gif_demo/'
+    ? '/gif_tools/'
     : '/',
   configureWebpack: {
     plugins: [
