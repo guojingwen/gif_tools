@@ -8,7 +8,7 @@
     "deploy": "node ./node_modules/vue-gh-pages/index.js"
   },
   "wst": "/dist/",
-  "homepage": "https://github.com/guojingwen/gif_demo",
+  "homepage": "https://github.com/guojingwen/gif_tools",
   "dependencies": {
     "core-js": "^3.6.4",
     "vant": "^2.8.0",
